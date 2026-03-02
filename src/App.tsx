@@ -12,7 +12,6 @@ export default function App() {
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [manualApiKey, setManualApiKey] = useState('');
-  const CHRISTOPHER_TEMP_KEY = 'AIzaSyBPJE-AXL2r9eMGrBspOBfG9cAXCeuuHDk';
   
   // Editable state for metadata
   const [editableMetadata, setEditableMetadata] = useState<CitationMetadata>({});
@@ -22,10 +21,6 @@ export default function App() {
     const saved = localStorage.getItem('citation_manual_gemini_api_key');
     if (saved) setManualApiKey(saved);
   }, []);
-
-  const useChristopherKey = () => {
-    handleApiKeyChange(CHRISTOPHER_TEMP_KEY);
-  };
 
   const handleApiKeyChange = (value: string) => {
     setManualApiKey(value);
@@ -154,13 +149,6 @@ export default function App() {
               <p className="text-xs text-zinc-500 mt-2">
                 Optional: leave blank to use environment config. This key is stored in localStorage on this device only.
               </p>
-              <button
-                type="button"
-                onClick={useChristopherKey}
-                className="mt-3 inline-flex items-center px-3 py-2 rounded-lg bg-zinc-100 text-zinc-800 text-sm font-medium hover:bg-zinc-200 transition-colors"
-              >
-                Use Christopher's Key
-              </button>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between w-full">
