@@ -155,17 +155,19 @@ export default function App() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between w-full">
-              <div className="hidden" aria-hidden="true">
+              <div className="w-full sm:w-64">
                 <label htmlFor="modelId" className="sr-only">Model</label>
                 <select
                   id="modelId"
+                  className="w-full rounded-lg border-zinc-300 border px-3 py-2 text-sm text-zinc-700 focus:ring-2 focus:ring-zinc-900 focus:border-transparent outline-none bg-white"
                   value={modelId}
                   onChange={(e) => setModelId(e.target.value as CitationModelId)}
                 >
-                  <option value="gemini-3.1-pro-preview-customtools">Gemini 3.1 Pro (Tools)</option>
-                  <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
-                  <option value="gemini-3-flash-preview">Gemini 3.0 Flash</option>
                   <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                  <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+                  <option value="gemini-3.1-flash-preview">Gemini 3.1 Flash</option>
+                  <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro</option>
+                  <option value="gemini-3.1-pro-preview-customtools">Gemini 3.1 Pro Tools</option>
                 </select>
               </div>
 
