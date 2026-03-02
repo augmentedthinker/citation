@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Search, Copy, Check, AlertCircle, ExternalLink, RefreshCw, Info } from 'lucide-react';
-import { generateCitation, CitationResult, SourceType, CitationMetadata } from './services/gemini';
+import { generateCitation, CitationResult, SourceType, CitationMetadata, CitationModelId } from './services/gemini';
 
 export default function App() {
   const [input, setInput] = useState('');
   const [typeHint, setTypeHint] = useState('Auto');
   const [loading, setLoading] = useState(false);
+  const [modelId, setModelId] = useState<CitationModelId>('gemini-3-flash-preview');
   const [result, setResult] = useState<CitationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -39,7 +40,7 @@ export default function App() {
     setResult(null);
 
     try {
-      const res = await generateCitation(input, typeHint, manualApiKey.trim() || undefined);
+      const res = await generateCitation(input, typeHint, manualApiKey.trim() || undefined, modelId);
       setResult(res);
       setEditableMetadata(res.metadata || {});
       setEditableCitation(res.citation || '');
@@ -147,7 +148,21 @@ export default function App() {
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between w-full">
+              <div className="w-full sm:w-64">
+                <label htmlFor="modelId" className="sr-only">Model</label>
+                <select
+                  id="modelId"
+                  className="w-full rounded-lg border-zinc-300 border px-3 py-2 text-sm text-zinc-700 focus:ring-2 focus:ring-zinc-900 focus:border-transparent outline-none bg-white"
+                  value={modelId}
+                  onChange={(e) => setModelId(e.target.value as CitationModelId)}
+                >
+                  <option value="gemini-3.1-pro-preview-customtools">Gemini 3.1 Pro (Tools)</option>
+                  <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
+                  <option value="gemini-3-flash-preview">Gemini 3.0 Flash</option>
+                </select>
+              </div>
+
               <div className="w-full sm:w-64">
                 <label htmlFor="typeHint" className="sr-only">Source Type Hint</label>
                 <select

@@ -14,6 +14,11 @@ export interface CitationMetadata {
   lastVisited?: string;
 }
 
+export type CitationModelId =
+  | 'gemini-3.1-pro-preview-customtools'
+  | 'gemini-3.1-pro-preview'
+  | 'gemini-3-flash-preview';
+
 export interface CitationResult {
   sourceType: SourceType;
   confidence: 'high' | 'medium' | 'low';
@@ -23,7 +28,12 @@ export interface CitationResult {
   explanation: string;
 }
 
-export async function generateCitation(input: string, typeHint: string = 'Auto', manualApiKey?: string): Promise<CitationResult> {
+export async function generateCitation(
+  input: string,
+  typeHint: string = 'Auto',
+  manualApiKey?: string,
+  modelId: CitationModelId = 'gemini-3-flash-preview'
+): Promise<CitationResult> {
   const apiKey = manualApiKey || import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.GEMINI_API_KEY;
 
   if (!apiKey) {
@@ -54,7 +64,7 @@ Return the result as a JSON object matching the schema.
   `;
 
   const response = await ai.models.generateContent({
-    model: 'gemini-3-flash-preview',
+    model: modelId,
     contents: prompt,
     config: {
       tools: [{ googleSearch: {} }],
