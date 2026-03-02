@@ -1,7 +1,5 @@
 import { GoogleGenAI, Type } from '@google/genai';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
 export type SourceType = 'court_case' | 'enforcement_action' | 'guidance_page';
 
 export interface CitationMetadata {
@@ -25,7 +23,14 @@ export interface CitationResult {
   explanation: string;
 }
 
-export async function generateCitation(input: string, typeHint: string = 'Auto'): Promise<CitationResult> {
+export async function generateCitation(input: string, typeHint: string = 'Auto', manualApiKey?: string): Promise<CitationResult> {
+  const apiKey = manualApiKey || import.meta.env.VITE_GEMINI_API_KEY || import.meta.env.GEMINI_API_KEY;
+
+  if (!apiKey) {
+    throw new Error('Missing Gemini API key. Enter one in the API key field or configure VITE_GEMINI_API_KEY.');
+  }
+
+  const ai = new GoogleGenAI({ apiKey });
   const prompt = `
 You are an expert legal citation assistant. Your task is to analyze a rough description of a legal source, find the most authoritative actual source using Google Search, classify it, extract metadata, and generate a Bluebook-style citation.
 

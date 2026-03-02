@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { Search, Copy, Check, AlertCircle, ExternalLink, RefreshCw, Info } from 'lucide-react';
 import { generateCitation, CitationResult, SourceType, CitationMetadata } from './services/gemini';
@@ -10,10 +10,25 @@ export default function App() {
   const [result, setResult] = useState<CitationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [manualApiKey, setManualApiKey] = useState('');
   
   // Editable state for metadata
   const [editableMetadata, setEditableMetadata] = useState<CitationMetadata>({});
   const [editableCitation, setEditableCitation] = useState('');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('citation_manual_gemini_api_key');
+    if (saved) setManualApiKey(saved);
+  }, []);
+
+  const handleApiKeyChange = (value: string) => {
+    setManualApiKey(value);
+    if (value.trim()) {
+      localStorage.setItem('citation_manual_gemini_api_key', value.trim());
+    } else {
+      localStorage.removeItem('citation_manual_gemini_api_key');
+    }
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +39,7 @@ export default function App() {
     setResult(null);
 
     try {
-      const res = await generateCitation(input, typeHint);
+      const res = await generateCitation(input, typeHint, manualApiKey.trim() || undefined);
       setResult(res);
       setEditableMetadata(res.metadata || {});
       setEditableCitation(res.citation || '');
@@ -114,6 +129,24 @@ export default function App() {
               />
             </div>
             
+
+            <div>
+              <label htmlFor="apiKey" className="block text-sm font-medium text-zinc-700 mb-2">
+                Google Gemini API Key (manual override)
+              </label>
+              <input
+                id="apiKey"
+                type="password"
+                className="w-full rounded-xl border-zinc-300 border p-3 text-zinc-900 focus:ring-2 focus:ring-zinc-900 focus:border-transparent outline-none transition-all"
+                placeholder="AIza... (saved locally in this browser)"
+                value={manualApiKey}
+                onChange={(e) => handleApiKeyChange(e.target.value)}
+              />
+              <p className="text-xs text-zinc-500 mt-2">
+                Optional: leave blank to use environment config. This key is stored in localStorage on this device only.
+              </p>
+            </div>
+
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="w-full sm:w-64">
                 <label htmlFor="typeHint" className="sr-only">Source Type Hint</label>
