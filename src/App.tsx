@@ -149,9 +149,26 @@ export default function App() {
               <p className="text-xs text-zinc-500 mt-2">
                 Optional: leave blank to use environment config. This key is stored in localStorage on this device only.
               </p>
+              <p className="text-xs text-zinc-600 mt-2">
+                Active model: <span className="font-mono">{modelId}</span>
+              </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between w-full">
+              <div className="hidden" aria-hidden="true">
+                <label htmlFor="modelId" className="sr-only">Model</label>
+                <select
+                  id="modelId"
+                  value={modelId}
+                  onChange={(e) => setModelId(e.target.value as CitationModelId)}
+                >
+                  <option value="gemini-3.1-pro-preview-customtools">Gemini 3.1 Pro (Tools)</option>
+                  <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
+                  <option value="gemini-3-flash-preview">Gemini 3.0 Flash</option>
+                  <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+                </select>
+              </div>
+
               <div className="w-full sm:w-64">
                 <label htmlFor="typeHint" className="sr-only">Source Type Hint</label>
                 <select
