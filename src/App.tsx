@@ -112,6 +112,9 @@ export default function App() {
         <header className="mb-12 text-center">
           <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 mb-2">Rose Citation Assistant</h1>
           <p className="text-zinc-500">Bluebook Citation App POC for legal research sources</p>
+          <div className="mt-4 mx-auto max-w-2xl rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            Demo only — outputs can contain errors or hallucinations. Always verify sources and citations before use.
+          </div>
         </header>
 
         {/* Input Section */}
@@ -161,21 +164,6 @@ export default function App() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between w-full">
-              <div className="w-full sm:w-64">
-                <label htmlFor="modelId" className="sr-only">Model</label>
-                <select
-                  id="modelId"
-                  className="w-full rounded-lg border-zinc-300 border px-3 py-2 text-sm text-zinc-700 focus:ring-2 focus:ring-zinc-900 focus:border-transparent outline-none bg-white"
-                  value={modelId}
-                  onChange={(e) => setModelId(e.target.value as CitationModelId)}
-                >
-                  <option value="gemini-3.1-pro-preview-customtools">Gemini 3.1 Pro (Tools)</option>
-                  <option value="gemini-3.1-pro-preview">Gemini 3.1 Pro Preview</option>
-                  <option value="gemini-3-flash-preview">Gemini 3.0 Flash</option>
-                  <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-                </select>
-              </div>
-
               <div className="w-full sm:w-64">
                 <label htmlFor="typeHint" className="sr-only">Source Type Hint</label>
                 <select
