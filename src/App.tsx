@@ -7,7 +7,7 @@ export default function App() {
   const [input, setInput] = useState('');
   const [typeHint, setTypeHint] = useState('Auto');
   const [loading, setLoading] = useState(false);
-  const [modelId, setModelId] = useState<CitationModelId>('gemini-3-flash-preview');
+  const [modelId, setModelId] = useState<CitationModelId>('gemini-2.5-flash');
   const [result, setResult] = useState<CitationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
