@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from '@google/genai';
+import { GoogleGenAI } from '@google/genai';
 
 export type SourceType = 'court_case' | 'enforcement_action' | 'guidance_page';
 
@@ -79,32 +79,7 @@ Return the result as a JSON object matching the schema.
     contents: prompt,
     config: {
       tools: [{ googleSearch: {} }],
-      responseMimeType: 'application/json',
-      responseSchema: {
-        type: Type.OBJECT,
-        properties: {
-          sourceType: { type: Type.STRING, enum: ['court_case', 'enforcement_action', 'guidance_page'] },
-          confidence: { type: Type.STRING, enum: ['high', 'medium', 'low'] },
-          sourceUrl: { type: Type.STRING, description: 'The URL of the most authoritative source found.' },
-          metadata: {
-            type: Type.OBJECT,
-            properties: {
-              caseName: { type: Type.STRING },
-              docketNumber: { type: Type.STRING },
-              court: { type: Type.STRING },
-              year: { type: Type.STRING },
-              agencyName: { type: Type.STRING },
-              title: { type: Type.STRING },
-              date: { type: Type.STRING },
-              url: { type: Type.STRING },
-              lastVisited: { type: Type.STRING },
-            }
-          },
-          citation: { type: Type.STRING, description: 'The generated Bluebook-style citation.' },
-          explanation: { type: Type.STRING, description: 'Explanation of source selection and any warnings (e.g., if a fallback source was used).' }
-        },
-        required: ['sourceType', 'confidence', 'sourceUrl', 'metadata', 'citation', 'explanation']
-      }
+      systemInstruction: `Return ONLY valid JSON with this shape: {"sourceType":"court_case|enforcement_action|guidance_page","confidence":"high|medium|low","sourceUrl":"...","metadata":{},"citation":"...","explanation":"..."}`,
     }
   }), 60000, 'Citation request');
 
@@ -112,5 +87,12 @@ Return the result as a JSON object matching the schema.
     throw new Error("Failed to generate citation: Empty response");
   }
 
-  return JSON.parse(response.text) as CitationResult;
+  const raw = response.text.trim();
+  const cleaned = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```$/i, '').trim();
+
+  try {
+    return JSON.parse(cleaned) as CitationResult;
+  } catch {
+    throw new Error(`Model returned non-JSON output. Raw response: ${raw.slice(0, 280)}`);
+  }
 }
