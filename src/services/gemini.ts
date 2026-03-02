@@ -28,6 +28,16 @@ export interface CitationResult {
   explanation: string;
 }
 
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) =>
+      setTimeout(() => reject(new Error(`${label} timed out after ${Math.round(ms / 1000)}s.`)), ms)
+    ),
+  ]);
+}
+
 export async function generateCitation(
   input: string,
   typeHint: string = 'Auto',
@@ -63,7 +73,7 @@ Follow these steps:
 Return the result as a JSON object matching the schema.
   `;
 
-  const response = await ai.models.generateContent({
+  const response = await withTimeout(ai.models.generateContent({
     model: modelId,
     contents: prompt,
     config: {
@@ -95,7 +105,7 @@ Return the result as a JSON object matching the schema.
         required: ['sourceType', 'confidence', 'sourceUrl', 'metadata', 'citation', 'explanation']
       }
     }
-  });
+  }), 60000, 'Citation request');
 
   if (!response.text) {
     throw new Error("Failed to generate citation: Empty response");
