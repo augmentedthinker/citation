@@ -17,7 +17,8 @@ export interface CitationMetadata {
 export type CitationModelId =
   | 'gemini-3.1-pro-preview-customtools'
   | 'gemini-3.1-pro-preview'
-  | 'gemini-3-flash-preview';
+  | 'gemini-3-flash-preview'
+  | 'gemini-2.5-flash';
 
 export interface CitationResult {
   sourceType: SourceType;
